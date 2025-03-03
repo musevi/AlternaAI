@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.tabs.create({ url: link.href }); // Open link in a new tab
     });
   }
-  
+
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length === 0) return;
 
@@ -87,10 +87,25 @@ function displayImages(images, tabId) {
     // Generate button
     const generateButton = document.createElement("button");
     generateButton.textContent = image.alt ? "Improve Alt Text" : "Generate Alt Text";
-    generateButton.addEventListener("click", () => {
-      generateAltText(image.src, contentContainer);
+    generateButton.addEventListener("click", async () => {
       generateButton.disabled = true;
       generateButton.textContent = "Generating...";
+    
+      try {
+        // Call the async generateAltText function
+        await generateAltText(image.src, contentContainer);
+      } catch (error) {
+        console.error("Error generating alt text:", error);
+        // Optionally, display an error message to the user
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "error-message";
+        errorMessage.textContent = "Failed to generate alt text. Please try again.";
+        contentContainer.appendChild(errorMessage);
+      } finally {
+        // Re-enable the button and update its text
+        generateButton.disabled = false;
+        generateButton.textContent = image.alt ? "Improve Alt Text" : "Generate Alt Text";
+      }
     });
     contentContainer.appendChild(generateButton);
     
@@ -121,34 +136,61 @@ function displayImages(images, tabId) {
   heading.insertAdjacentElement("afterend", scoreDiv);
 }
 
-function generateAltText(imageSrc, container) {
-  // Mock function for generating alt text
-  setTimeout(() => {
-    const filename = imageSrc.split("/").pop();
-    const mockAlt = `An image of ${filename.split('.')[0].replace(/-|_/g, ' ')}`;
-    
-    const generatedAltContainer = document.createElement("div");
-    generatedAltContainer.className = "generated-alt";
-    generatedAltContainer.textContent = `alt="${mockAlt}"`;
-    
-    // Add copy button
-    const copyButton = document.createElement("button");
-    copyButton.className = "copy-button";
-    copyButton.textContent = "Copy";
-    copyButton.addEventListener("click", () => {
-      navigator.clipboard.writeText(`alt="${mockAlt}"`);
-      copyButton.textContent = "Copied!";
-      setTimeout(() => {
-        copyButton.textContent = "Copy";
-      }, 2000);
-    });
-    
-    generatedAltContainer.appendChild(copyButton);
-    container.appendChild(generatedAltContainer);
-    
-    // Update the button
-    const button = container.querySelector("button");
-    button.textContent = "Generate Alt Text";
-    button.disabled = false;
-  }, 1000); // Simulate async operation
+async function generateAltText(imageSrc, container) {
+  const OPENAI_API_KEY = "__INSERT_API_HERE__";
+
+  // Prepare API request payload
+  const requestBody = {
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: "You are an assistant that generates descriptive alt text for images."
+      },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: "Describe this image in a concise alt text format." },
+          { type: "image_url", image_url: imageSrc }
+        ]
+      }
+    ],
+    max_tokens: 100
+  };
+
+  // Send request to OpenAI API
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${OPENAI_API_KEY}`
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  const data = await response.json();
+
+  // Extract AI-generated alt text
+  const altText = data.choices?.[0]?.message?.content || "Image description not available.";
+
+  // Create a container for the generated alt text
+  const generatedAltContainer = document.createElement("div"); // TODO: Modify this so instead of creating one, modify the existing one
+  generatedAltContainer.className = "generated-alt";
+  generatedAltContainer.textContent = `alt="${altText}"`;
+
+  // Add a copy button
+  const copyButton = document.createElement("button");
+  copyButton.className = "copy-button";
+  copyButton.textContent = "Copy";
+  copyButton.addEventListener("click", () => {
+    navigator.clipboard.writeText(`alt="${altText}"`);
+    copyButton.textContent = "Copied!";
+    setTimeout(() => {
+      copyButton.textContent = "Copy";
+    }, 2000);
+  });
+
+  generatedAltContainer.appendChild(copyButton);
+  container.appendChild(generatedAltContainer); 
+
 }
