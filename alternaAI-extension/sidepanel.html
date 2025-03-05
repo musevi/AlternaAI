@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Alt Text Analyzer</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Roboto+Slab:400,700" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Roboto+Slab:400,700"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --primary-color: #b13b3c;
@@ -19,47 +22,51 @@
         --card-bg: #fff;
         --bg-color: #f8f9fa;
       }
-      
+
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
-      
+
       body {
-        width: 350px;
-        height: 500px;
-        font-family: 'Open Sans', sans-serif;
+        width: 100%;
+        height: 100vh;
+        font-family: "Open Sans", sans-serif;
         background-color: var(--bg-color);
         color: var(--text-color);
         padding: 16px;
         overflow-y: auto;
       }
-      
-      h1{
+
+      h1 {
         color: #3d4449;
         font-family: "Roboto Slab", serif;
         font-weight: 700;
         line-height: 1.5;
-        margin: 0 0 1em 0; }
-        h1 a, h2 a {
-          color: inherit;
-          text-decoration: none;
-          border-bottom: 0; }
+        margin: 0 0 1em 0;
+      }
+      h1 a,
+      h2 a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 0;
+      }
 
       h1 {
         margin: 0 0 0.1em 0;
-        line-height: 1.3; }
-        
+        line-height: 1.3;
+      }
+
       h2 {
-        font-family: 'Roboto Slab', serif;
+        font-family: "Roboto Slab", serif;
         font-weight: 700;
         color: var(--primary-color);
         margin-bottom: 16px;
         padding-bottom: 8px;
         border-bottom: 2px solid var(--primary-light);
       }
-      
+
       .score-container {
         margin-bottom: 20px;
         border-radius: 8px;
@@ -68,29 +75,29 @@
         transition: all 0.3s ease;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
-      
+
       .score-container.good {
         background-color: rgba(46, 204, 113, 0.1);
         border-left: 4px solid var(--success-color);
         color: #27ae60;
       }
-      
+
       .score-container.warning {
         background-color: rgba(243, 156, 18, 0.1);
         border-left: 4px solid var(--warning-color);
         color: #d35400;
       }
-      
+
       .score-container.bad {
         background-color: rgba(231, 76, 60, 0.1);
         border-left: 4px solid var(--danger-color);
         color: #c0392b;
       }
-      
+
       ul {
         list-style-type: none;
       }
-      
+
       li {
         background-color: var(--card-bg);
         margin-bottom: 16px;
@@ -99,12 +106,12 @@
         overflow: hidden;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
-      
+
       li:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
       }
-      
+
       .image-container {
         position: relative;
         width: 100%;
@@ -112,7 +119,7 @@
         overflow: hidden;
         background-color: #f0f0f0;
       }
-      
+
       img {
         width: 100%;
         height: 100%;
@@ -120,15 +127,15 @@
         transition: transform 0.3s ease;
         cursor: pointer;
       }
-      
+
       img:hover {
         transform: scale(1.05);
       }
-      
+
       .content-container {
         padding: 12px;
       }
-      
+
       .alt-text {
         display: block;
         font-size: 13px;
@@ -136,7 +143,7 @@
         margin-bottom: 10px;
         line-height: 1.4;
       }
-      
+
       .alt-status {
         font-size: 11px;
         font-weight: 600;
@@ -145,24 +152,24 @@
         display: inline-block;
         margin-bottom: 8px;
       }
-      
+
       .alt-status.missing {
         background-color: rgba(231, 76, 60, 0.1);
         color: var(--danger-color);
       }
-      
+
       .alt-status.present {
         background-color: rgba(46, 204, 113, 0.1);
         color: var(--success-color);
       }
-      
+
       button {
         background-color: var(--primary-color);
         color: white;
         border: none;
         padding: 8px 12px;
         border-radius: 4px;
-        font-family: 'Open Sans', sans-serif;
+        font-family: "Open Sans", sans-serif;
         font-weight: 600;
         font-size: 12px;
         cursor: pointer;
@@ -170,11 +177,11 @@
         display: block;
         width: 100%;
       }
-      
+
       button:hover {
         background-color: var(--primary-hover);
       }
-      
+
       .generated-alt {
         margin-top: 12px;
         padding: 10px;
@@ -185,7 +192,7 @@
         font-size: 12px;
         position: relative;
       }
-      
+
       .copy-button {
         position: absolute;
         top: 5px;
@@ -196,37 +203,155 @@
         padding: 3px 6px;
         font-size: 11px;
       }
-      
+
       .copy-button:hover {
         background-color: rgba(0, 0, 0, 0.05);
         color: var(--primary-color);
       }
-      
+
+      /* Settings container styles */
+      .settings-container {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      }
+
+      .setting-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .setting-label {
+        margin-left: 10px;
+        font-size: 13px;
+      }
+
+      .info-icon {
+        margin-left: 6px;
+        color: var(--light-text);
+        font-size: 14px;
+        cursor: help;
+      }
+
+      /* Toggle switch styles */
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 20px;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .toggle-slider {
+        background-color: var(--primary-color);
+      }
+
+      input:checked + .toggle-slider:before {
+        transform: translateX(16px);
+      }
+
       /* Scrollbar styling */
       ::-webkit-scrollbar {
         width: 8px;
       }
-      
+
       ::-webkit-scrollbar-track {
         background: #f1f1f1;
       }
-      
+
       ::-webkit-scrollbar-thumb {
         background: #c5c5c5;
         border-radius: 4px;
       }
-      
+
       ::-webkit-scrollbar-thumb:hover {
         background: var(--primary-color);
       }
+
+      /* Loading animation */
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: var(--light-text);
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(177, 59, 60, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--primary-color);
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 10px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
-  
+
   <body>
     <h1><a href="https://musevi.github.io/AlternaAI/">AlternaAI</a></h1>
     <h2>Image Alt Text Analyzer</h2>
+
+    <!-- Settings container -->
+    <div class="settings-container">
+      <div class="setting-item">
+        <label class="toggle-switch">
+          <input type="checkbox" id="useContextToggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="setting-label">Use page context for generation</span>
+        <span
+          class="info-icon"
+          title="When enabled, surrounding text, headings, and other page elements will be used to generate more relevant alt text"
+          >ⓘ</span
+        >
+      </div>
+    </div>
+
     <!-- Score container will be inserted here by JS -->
+    <div id="loadingIndicator" class="loading">
+      <div class="loading-spinner"></div>
+      <p>Analyzing images on the current page...</p>
+    </div>
     <ul id="imageList"></ul>
-    <script src="popup.js"></script>
+    <script src="sidepanel.js"></script>
   </body>
 </html>
