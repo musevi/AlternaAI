@@ -8,7 +8,3 @@ Service that utilizes AI to assist in generating image alternative text
  - select the alternaAI-extension
  - you can then pin it to your toolbar and run it
 
-## Todo
- - Deploy Extension
- - Figure out how to inject to background.js
- - Maybe make it a sidebar?
